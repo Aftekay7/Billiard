@@ -26,7 +26,7 @@ public class Ball extends Circle {
 
     /**
      * Simulates a collision with a wall
-     *
+     *  TODO: Fix collision Bug. -> if ball collides and is "inside" the wall, reset position to the realistic (line/circumference) collision point.
      * @param wall
      */
     public void collision(Wall wall) {
@@ -84,6 +84,11 @@ public class Ball extends Circle {
     }
 
 
+    /**
+     * simulates the collision with another ball.
+     *  TODO: Fix collision Bug. -> if ball collides and is "inside" the other ball, reset positions to the realistic (insersection of balls) collision point.
+     * @param ball
+     */
     public void collision(Ball ball) {
         // We want to build a base with the collision-tangent as the first base vector and
         // the collision-normal as the second base vector to calculate exchanged velocities.

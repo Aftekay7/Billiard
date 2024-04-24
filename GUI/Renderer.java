@@ -4,6 +4,7 @@ import Game.Structures.Ball;
 import Game.Structures.Table;
 import Physics.Collidable;
 import Physics.Vector;
+import Game.Structures.Ball;
 
 import javax.swing.*;
 import java.awt.*;
@@ -32,7 +33,7 @@ public class Renderer extends JFrame {
     private Vector[] gameField_rendered_edges = new Vector[4];
     private Vector[] table_rendered_edges = new Vector[4];
     private Vector[] table_marks = new Vector[4];       // { headline_top, headline_bot, headpoint, footpoint }
-    private static final int FPS = 1000;
+    private static final int FPS = 100;
 
     public Renderer(Table table) {
 

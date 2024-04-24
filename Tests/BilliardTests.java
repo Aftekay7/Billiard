@@ -3,9 +3,8 @@ package Tests;
 import Game.Structures.Ball;
 import Game.Structures.BallNumber;
 import Game.Structures.Wall;
-import Physics.Line;
+
 import Physics.*;
-import Physics.Vector;
 import org.junit.Test;
 
 import java.awt.*;
@@ -167,24 +166,6 @@ public class BilliardTests {
         assertEquals(new Vector(1,-1),Physics.solveLS(vec1,vec2,sol2));
 
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 }

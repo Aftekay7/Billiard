@@ -7,6 +7,7 @@ import Physics.Collidable;
 import Physics.Vector;
 
 public class GameLogic {
+
     //ticks per second
     private final int ticksPerSecond = 100;
     private final int tickSpeed = 1000 / ticksPerSecond;
@@ -59,6 +60,10 @@ public class GameLogic {
     }
 
 
+    /**
+     * iterates over all (other) objects that are used in the game and checks for collisions.
+     * @param b
+     */
     private void checkCollisions(Ball b) {
         Collidable[] gameObj = table.getGameObjects();
 
