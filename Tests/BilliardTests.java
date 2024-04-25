@@ -168,4 +168,21 @@ public class BilliardTests {
     }
 
 
+    @Test
+    public void testDotProductReturnOrthogonal () {
+        Vector vec1 = new Vector(0,1120);
+        Vector vec2 = new Vector(0,-25.50764F);
+
+        Vector vec3 = new Vector(2240,0);
+        Vector vec4 = new Vector(29.919F,0);
+
+        float dotProd = Physics.dotProduct(vec1,vec2);
+        float dotProd2 = Physics.dotProduct(vec3,vec4);
+        System.out.println("Result dot-product: " + dotProd2);
+
+        float lengthSqd = vec3.length() * vec4.length();
+        System.out.println("Result len1 * len2: " + lengthSqd);
+    }
+
+
 }

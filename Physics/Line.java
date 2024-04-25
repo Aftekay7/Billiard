@@ -31,13 +31,20 @@ public class Line extends Collidable {
         float dotProduct = 0;
         dotProduct = Physics.dotProduct(direction_vec, lineOpp.getDirection_vec());
 
+        //dotProd(v1,v2) == len(v1) * len(v2) <=> vectors are parallel
+        // length only returns positive lengths whereas dotProd might return a negative value depending on the orientation of the vectors
+        //-> take the absolut value of the dot product
+
+        if (dotProduct < 0) {
+            dotProduct *= -1;
+        }
 
 
-        //direction vectors are parallel -> lines dont intersect
-        // TODO: Add a delta for the check (float might be not precise enough) if parallel Vectors are still passed on
+        // TODO: Maye add a delta for the check (float might be not precise enough) if parallel Vectors are still passed on
         float lengthProd = direction_vec.length() * lineOpp.direction_vec.length();
-        float delta = 0.0001F;
-        if ((dotProduct - delta) < lengthProd && lengthProd < (dotProduct + delta)) {
+        float delta = 0.001F;
+        if (dotProduct == lengthProd) {
+            //direction vectors are parallel -> lines dont intersect
             return null;
         }
 
