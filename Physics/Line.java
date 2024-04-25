@@ -24,6 +24,7 @@ public class Line extends Collidable {
 
     /**
      * calculates the intersection point of the two lines. returns null if lines don't intersect.
+     *
      * @param lineOpp
      * @return
      */
@@ -34,7 +35,6 @@ public class Line extends Collidable {
         //dotProd(v1,v2) == len(v1) * len(v2) <=> vectors are parallel
         // length only returns positive lengths whereas dotProd might return a negative value depending on the orientation of the vectors
         //-> take the absolut value of the dot product
-
         if (dotProduct < 0) {
             dotProduct *= -1;
         }
@@ -42,7 +42,7 @@ public class Line extends Collidable {
 
         // TODO: Maye add a delta for the check (float might be not precise enough) if parallel Vectors are still passed on
         float lengthProd = direction_vec.length() * lineOpp.direction_vec.length();
-        float delta = 0.001F;
+        //float delta = 0.001F;
         if (dotProduct == lengthProd) {
             //direction vectors are parallel -> lines dont intersect
             return null;
@@ -56,20 +56,9 @@ public class Line extends Collidable {
         Vector col2 = lineOpp.direction_vec.copy();
         col2.flip();
 
-        float L_2;
-        try {
-
-            //calculate lambdas
-            Vector lambdas = Physics.solveLS(this.direction_vec,col2,solutions);
-            L_2 = lambdas.y;
-
-        } catch (IllegalArgumentException e) {
-            System.out.println("this Line: " + this.support_vec + " + L_1 *  " + this.direction_vec);
-            System.out.println("opp Line: " + lineOpp.support_vec + " + L_2 * " + lineOpp.direction_vec);
-            throw e;
-        }
-
-
+        //calculate lambdas
+        Vector lambdas = Physics.solveLS(this.direction_vec, col2, solutions);
+        float L_2 = lambdas.y;
 
         Vector p = lineOpp.getDirection_vec().copy();
         p.scale(L_2);

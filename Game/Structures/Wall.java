@@ -20,7 +20,7 @@ public class Wall extends Line {
         super(edges[0], null);
 
         if (edges[0].equals(edges[1])) {
-            throw new IllegalArgumentException("Wall: Edges of Wall cant be equal, your wall is a point");
+            throw new IllegalArgumentException("Wall: Edges of wall cant be equal, your wall is a point");
         }
 
         this.edges = new Vector[2];
