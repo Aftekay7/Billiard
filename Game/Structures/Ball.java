@@ -34,13 +34,7 @@ public class Ball extends Circle {
         Line traj_ball = new Line(center, velocity);
 
         //check if and where the ball hits the wall
-        Vector isec_ball_wall;
-        if (this.velocity.isZero()) {
-            isec_ball_wall = super.intersects(wall);
-        } else {
-            isec_ball_wall = wall.intersects(traj_ball);
-        }
-
+        Vector isec_ball_wall = super.intersects(wall);
         if (isec_ball_wall == null) {
             return;
         }
