@@ -6,15 +6,6 @@ package Physics;
  */
 public class Physics {
 
-    /**
-     * Rotates a Vector <alpha> degrees (clockwise)
-     *
-     * @param alpha angle
-     */
-    public static void rotateVec(int alpha) {
-        //TODO
-    }
-
 
     /**
      * calculates the dot-product. vec1 and vec2 have to != 0
@@ -81,6 +72,5 @@ public class Physics {
 
         return solution;
     }
-
 
 }

@@ -28,18 +28,6 @@ public class Line extends Collidable {
      * @return
      */
     public Vector intersects(Line lineOpp) {
-        //this line
-        float S_X = this.support_vec.x;
-        float S_Y = this.support_vec.y;
-        float D_X = this.direction_vec.x;
-        float D_Y = this.direction_vec.y;
-
-        //other line
-        float C_X = lineOpp.support_vec.x;
-        float C_Y = lineOpp.support_vec.y;
-        float V_X = lineOpp.direction_vec.x;
-        float V_Y = lineOpp.direction_vec.y;
-
         float dotProduct = Physics.dotProduct(direction_vec, lineOpp.getDirection_vec());
 
         //direction vectors are parallel -> lines dont intersect
@@ -47,18 +35,16 @@ public class Line extends Collidable {
             return null;
         }
 
-        float L_2;
-        if (D_X != 0) {
+        //build the LS to solve for the parameters that are used for the linear combination of the intersection point
 
-            L_2 = (C_Y - S_Y) - (D_Y * (C_X - S_X) / D_X);
+        //first 2 transformation steps, so we can use the LS-function
+        Vector solutions = new Vector(lineOpp.support_vec.x - this.support_vec.x, lineOpp.support_vec.y - this.support_vec.y);
+        Vector col2 = lineOpp.direction_vec.copy();
+        col2.flip();
 
-            L_2 = L_2 / ((-1) * V_Y + ( (D_Y*V_X) / D_X ) );
-
-
-        } else {
-            L_2 = (-1) * (C_X - S_X) / V_X;
-
-        }
+        //calculate lambdas
+        Vector lambdas = Physics.solveLS(this.direction_vec,col2,solutions);
+        float L_2 = lambdas.y;
 
         Vector p = lineOpp.getDirection_vec().copy();
         p.scale(L_2);
