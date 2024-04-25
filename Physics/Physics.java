@@ -68,7 +68,7 @@ public class Physics {
 
         } else if (B != 0) {
             L_2 = S_X / B;
-            L_1 = (S_Y - C*L_2) / C;
+            L_1 = (S_Y - D*L_2) / C;
 
         } else {
             System.out.println("vec1: " + vec1 + ", vec2: " + vec2 + ", sol: " + sol);

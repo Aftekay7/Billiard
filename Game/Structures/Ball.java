@@ -31,43 +31,39 @@ public class Ball extends Circle {
      */
     public void collision(Wall wall) {
 
-        //check if and where the ball hits the wall
+        //check if the ball hits the wall. The return is the closest point of the wall to the center of the ball
         Vector isec_ball_wall = super.intersects(wall);
         if (isec_ball_wall == null) {
             return;
         }
 
-        //construct the normal (a line, that is orthogonal to the wall, between the center of the ball and the wall.)
-        Vector normal_dir = wall.getDirection_vec().getOrthogonal();
-        Line normal = new Line(this.center, normal_dir);
+        //resetPosition(wall);
 
-        //get the intersection point of the normal and the wall (lot point)
-        Vector isec_normal_wall = normal.intersects(wall);
+        //construct line to calculate the intersection of the center with the wall.
+        Line center_line = new Line(this.center,velocity);
+        Vector isc_center_wall = center_line.intersects(wall);
 
-        //calculate the distance-vector between the lot_point and the center
-        Vector dist_lot_center = isec_normal_wall.copy();
-        dist_lot_center.sub(center);
+        isec_ball_wall.sub(center);
 
-        System.out.println(isec_normal_wall);
+        //construct new base for updating the velocity
+        Vector b2 = isec_ball_wall;
+        b2.normalize();
 
-/*
-        if (dist_lot_center.length() > this.getRadius()) {
-            //distance between ball and the wall is greater than the radius -> ball will hit the wall eventually,
-            //but is not colliding with it at this point of time
-            return;
-        }
-*/
-        //calculate the distance-vector between the lot_point and the intersection-point of the ball_trajectory/wall
-        Vector dist_lot_btw = isec_ball_wall.copy();
-        dist_lot_btw.sub(isec_normal_wall);
+        Vector b1 = b2.getOrthogonal();
 
-        //mirror velocity vector on the origin
-        dist_lot_center.flip();
-        dist_lot_center.add(dist_lot_btw);
-        dist_lot_center.normalize();
-        dist_lot_center.scale(this.velocity.length());
+        //calculate the lc to determine how ball is reflected
+        Vector lc_velocity = Physics.solveLS(b1,b2,this.velocity);
 
-        this.velocity = dist_lot_center;
+        Vector velocity_new = b1.copy();
+        velocity_new.scale(lc_velocity.x);
+        Vector buf = b2.copy();
+
+        //scale with (-1) because no velocity is absorbed by the wall.
+        buf.scale(lc_velocity.y * -1);
+
+        velocity_new.add(buf);
+
+        this.velocity = velocity_new;
 
     }
 
@@ -170,6 +166,27 @@ public class Ball extends Circle {
 
     public Vector getVelocity() {
         return velocity;
+    }
+
+
+    /**
+     * resets the position of the Ball after a collision with a wall
+     * new position is the exact position where the ball would've hit the wall (compensating the inaccuracy of the ticks)
+     */
+    private void resetPosition(Line line) {
+
+        //construct the line that is orthonormal to the wall with a distance of (radius - (center/intersec(ball/wall))
+        Vector orth = line.getDirection_vec().getOrthogonal();
+        orth.normalize();
+        orth.scale(getRadius() + 1);
+
+        Vector s = line.getSupport_vec().copy();
+        s.add(orth);
+
+        Line wall_reset = new Line(s,line.getDirection_vec());
+        Line center_reset = new Line(this.center, this.velocity);
+
+        this.center = center_reset.intersects(wall_reset);
     }
 }
 

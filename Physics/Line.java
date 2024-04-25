@@ -21,6 +21,9 @@ public class Line extends Collidable {
         this.support_vec = vec;
     }
 
+    public Vector getSupport_vec() {
+        return support_vec;
+    }
 
     /**
      * calculates the intersection point of the two lines. returns null if lines don't intersect.
