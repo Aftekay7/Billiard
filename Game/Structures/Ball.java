@@ -39,13 +39,8 @@ public class Ball extends Circle {
 
         //resetPosition(wall);
 
-        //construct line to calculate the intersection of the center with the wall.
-        Line center_line = new Line(this.center,velocity);
-        Vector isc_center_wall = center_line.intersects(wall);
-
-        isec_ball_wall.sub(center);
-
         //construct new base for updating the velocity
+        isec_ball_wall.sub(center);
         Vector b2 = isec_ball_wall;
         b2.normalize();
 

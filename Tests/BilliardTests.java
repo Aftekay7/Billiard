@@ -191,33 +191,15 @@ public class BilliardTests {
     public void testCompareCollisionIntersect () {
         Ball b1 = new Ball(BallNumber.WHITE, Color.white);
         b1.setVelocity(new Vector(5,5));
-        b1.setCenter(295,200);
+        b1.setCenter(295,100);
 
         Vector[] edges = {new Vector(300, 0), new Vector(300, 100)};
         Wall wall = new Wall(edges);
 
         b1.collision(wall);
-        System.out.println(b1.getCenterCopy());
-        System.out.println(b1.getVelocity());
+        assertEquals(new Vector(-5,5),b1.getVelocity());
 
     }
-
-
-    @Test
-    public void testMatrixMult () {
-        Vector test = new Vector(5,5);
-        Vector b2 = new Vector(5,5);
-        b2.normalize();
-        Vector b1 = b2.getOrthogonal();
-
-        Matrix m = new Matrix(b1,b2);
-        m.mult(test);
-
-        System.out.println(test);
-
-
-    }
-
 
     @Test
     public void testSolveLS2 () {
@@ -229,6 +211,5 @@ public class BilliardTests {
 
         assertEquals(new Vector(5,5),lds);
     }
-
 
 }
