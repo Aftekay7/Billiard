@@ -32,12 +32,16 @@ public class Circle extends Collidable {
         Vector dist = intersec.copy();
         dist.sub(center);
 
-        if (intersec.length() > this.radius) {
+        if (dist.length() <= this.radius) {
             //Line cuts within the circle
             return intersec;
         }
 
         return null;
+
+
+
+
     }
 
 

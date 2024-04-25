@@ -176,12 +176,29 @@ public class BilliardTests {
         Vector vec3 = new Vector(2240,0);
         Vector vec4 = new Vector(29.919F,0);
 
-        float dotProd = Physics.dotProduct(vec1,vec2);
-        float dotProd2 = Physics.dotProduct(vec3,vec4);
-        System.out.println("Result dot-product: " + dotProd2);
+        float lengthSqd = vec1.length() * vec2.length();
 
-        float lengthSqd = vec3.length() * vec4.length();
-        System.out.println("Result len1 * len2: " + lengthSqd);
+        float dotProd = Physics.dotProduct(vec1,vec2);
+        assertEquals(-1 * lengthSqd,dotProd,delta);
+
+        dotProd = Physics.dotProduct(vec3,vec4);
+        lengthSqd = vec3.length() * vec4.length();
+        assertEquals(lengthSqd,dotProd,delta);
+    }
+
+
+    @Test
+    public void testCompareCollisionIntersect () {
+        Ball b1 = new Ball(BallNumber.WHITE, Color.white);
+        b1.setVelocity(new Vector(0,0));
+        b1.setCenter(297,200);
+
+        Vector[] edges = {new Vector(300, 0), new Vector(300, 100)};
+        Wall wall = new Wall(edges);
+
+        Vector sol1 = b1.intersects(wall);
+
+        System.out.println(sol1);
     }
 
 

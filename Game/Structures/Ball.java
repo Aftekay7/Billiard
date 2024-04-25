@@ -30,8 +30,6 @@ public class Ball extends Circle {
      * @param wall
      */
     public void collision(Wall wall) {
-        //build the trajectory line of the ball
-        Line traj_ball = new Line(center, velocity);
 
         //check if and where the ball hits the wall
         Vector isec_ball_wall = super.intersects(wall);
@@ -50,12 +48,15 @@ public class Ball extends Circle {
         Vector dist_lot_center = isec_normal_wall.copy();
         dist_lot_center.sub(center);
 
+        System.out.println(isec_normal_wall);
+
+/*
         if (dist_lot_center.length() > this.getRadius()) {
             //distance between ball and the wall is greater than the radius -> ball will hit the wall eventually,
             //but is not colliding with it at this point of time
             return;
         }
-
+*/
         //calculate the distance-vector between the lot_point and the intersection-point of the ball_trajectory/wall
         Vector dist_lot_btw = isec_ball_wall.copy();
         dist_lot_btw.sub(isec_normal_wall);
@@ -71,10 +72,10 @@ public class Ball extends Circle {
     }
 
     public void updatePos() {
-        float breaks = 0.0027F;
+        float brakes = 0.0027F;
         this.center.add(this.velocity);
-        this.velocity.x -= (this.velocity.x * breaks);
-        this.velocity.y -= (this.velocity.y * breaks);
+        this.velocity.x -= (this.velocity.x * brakes);
+        this.velocity.y -= (this.velocity.y * brakes);
     }
 
 
