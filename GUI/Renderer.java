@@ -4,7 +4,6 @@ import Game.Structures.Ball;
 import Game.Structures.Table;
 import Physics.Collidable;
 import Physics.Vector;
-import Game.Structures.Ball;
 
 import javax.swing.*;
 import java.awt.*;
@@ -78,7 +77,7 @@ public class Renderer extends JFrame {
 
     /**
      * renders the table (game-field + walls)
-     *
+     * TODO: maybe change casts to rounding operation, animations might look smoother
      * @param g
      */
     private void renderTable(Graphics g) {
@@ -168,7 +167,7 @@ public class Renderer extends JFrame {
 
     }
 
-    private void getDrawingCoords(Vector vec, int radius) {
+    private void getDrawingCoords(Vector vec, float radius) {
         vec.x -= radius / scaler;
         vec.y -= radius / scaler;
     }
