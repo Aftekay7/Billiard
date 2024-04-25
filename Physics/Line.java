@@ -28,12 +28,19 @@ public class Line extends Collidable {
      * @return
      */
     public Vector intersects(Line lineOpp) {
-        float dotProduct = Physics.dotProduct(direction_vec, lineOpp.getDirection_vec());
+        float dotProduct = 0;
+        dotProduct = Physics.dotProduct(direction_vec, lineOpp.getDirection_vec());
+
+
 
         //direction vectors are parallel -> lines dont intersect
-        if (dotProduct == -1 || dotProduct == 1) {
+        // TODO: Add a delta for the check (float might be not precise enough) if parallel Vectors are still passed on
+        float lengthProd = direction_vec.length() * lineOpp.direction_vec.length();
+        float delta = 0.0001F;
+        if ((dotProduct - delta) < lengthProd && lengthProd < (dotProduct + delta)) {
             return null;
         }
+
 
         //build the LS to solve for the parameters that are used for the linear combination of the intersection point
 
@@ -42,9 +49,20 @@ public class Line extends Collidable {
         Vector col2 = lineOpp.direction_vec.copy();
         col2.flip();
 
-        //calculate lambdas
-        Vector lambdas = Physics.solveLS(this.direction_vec,col2,solutions);
-        float L_2 = lambdas.y;
+        float L_2;
+        try {
+
+            //calculate lambdas
+            Vector lambdas = Physics.solveLS(this.direction_vec,col2,solutions);
+            L_2 = lambdas.y;
+
+        } catch (IllegalArgumentException e) {
+            System.out.println("this Line: " + this.support_vec + " + L_1 *  " + this.direction_vec);
+            System.out.println("opp Line: " + lineOpp.support_vec + " + L_2 * " + lineOpp.direction_vec);
+            throw e;
+        }
+
+
 
         Vector p = lineOpp.getDirection_vec().copy();
         p.scale(L_2);

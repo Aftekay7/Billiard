@@ -8,16 +8,18 @@ public class Physics {
 
 
     /**
-     * calculates the dot-product. vec1 and vec2 have to != 0
+     * calculates the dot-product for vec1, vec2 != 0.
      *
      * @param vec1
      * @param vec2
      * @return dot-product
      */
     public static float dotProduct(Vector vec1, Vector vec2) {
+
         if (vec1.isZero() || vec2.isZero()) {
             throw new IllegalArgumentException("dotProduct: One of input vectors is 0");
         }
+
         return vec1.x * vec2.x + vec1.y * vec2.y;
     }
 
@@ -34,9 +36,13 @@ public class Physics {
         }
         Vector solution = new Vector(0, 0);
 
+        /*
+            vec1.x  vec2.x  sol.x   ->  A B | S_X
+            vec1.y  vec2.y  sol.y   ->  C D | S_Y
+         */
+
         float S_X = sol.x;
         float S_Y = sol.y;
-
         float A = vec1.x;
         float B = vec2.x;
         float C = vec1.y;
@@ -52,6 +58,7 @@ public class Physics {
             float buf2 = S_Y + (step_1 * S_X);
 
             if (buf1 == 0) {
+                System.out.println("vec1: " + vec1 + ", vec2: " + vec2 + ", sol: " + sol);
                 throw new IllegalArgumentException("SolveLS: Linear system has infinite or no solutions");
             }
 
@@ -64,6 +71,7 @@ public class Physics {
             L_1 = (S_Y - C*L_2) / C;
 
         } else {
+            System.out.println("vec1: " + vec1 + ", vec2: " + vec2 + ", sol: " + sol);
             throw new IllegalArgumentException("SolveLS: Linear system has infinite or no solutions");
         }
 
