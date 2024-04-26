@@ -119,7 +119,7 @@ public class Ball extends Circle {
         buf.scale(lc_vo.y);
         vt_new.add(buf);
 
-        //resetPositionBB();
+        resetPositionBB(ball);
 
         this.velocity = vt_new;
 
