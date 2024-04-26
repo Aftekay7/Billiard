@@ -45,6 +45,24 @@ public class Circle extends Collidable {
     }
 
 
+    /**
+     *
+     * @param circleOpp
+     * @return
+     */
+    public Vector intersects (Circle circleOpp) {
+        Vector dist_centers = this.center.copy();
+        dist_centers.sub(circleOpp.getCenterCopy());
+
+        if (dist_centers.length() <= this.radius + circleOpp.radius) {
+            //spheres intersect
+            // aber in anderer funktion, zu müde um gescheite docs zu schreiben.
+
+        }
+        return null;
+    }
+
+
     //returns copy of center
     public Vector getCenterCopy () {
         return new Vector(center.x, center.y);

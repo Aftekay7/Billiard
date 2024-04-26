@@ -73,6 +73,7 @@ public class Ball extends Circle {
     /**
      * simulates the collision with another ball.
      *  TODO: Fix collision Bug. -> if ball collides and is "inside" the other ball, reset positions to the realistic (insersection of balls) collision point.
+     *  //TODO: calculate backwards where the spheres start to intersect and reset centers depending on their velocity
      * @param ball
      */
     public void collision(Ball ball) {
