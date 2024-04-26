@@ -37,8 +37,6 @@ public class Ball extends Circle {
             return;
         }
 
-        //resetPosition(wall);
-
         //construct new base for updating the velocity
         isec_ball_wall.sub(center);
         Vector b2 = isec_ball_wall;
@@ -58,12 +56,15 @@ public class Ball extends Circle {
 
         velocity_new.add(buf);
 
+        resetPosition(wall);
+
         this.velocity = velocity_new;
 
     }
 
     public void updatePos() {
         float brakes = 0.0027F;
+        brakes = 0;
         this.center.add(this.velocity);
         this.velocity.x -= (this.velocity.x * brakes);
         this.velocity.y -= (this.velocity.y * brakes);
@@ -171,16 +172,32 @@ public class Ball extends Circle {
      */
     private void resetPosition(Line line) {
 
-        //construct the line that is orthonormal to the wall with a distance of (radius - (center/intersec(ball/wall))
+        //construct the line that is parallel to the wall with a distance of radius + 1
+
+        //determine the support vector (-> line.support + radius)
         Vector orth = line.getDirection_vec().getOrthogonal();
         orth.normalize();
         orth.scale(getRadius() + 1);
 
-        Vector s = line.getSupport_vec().copy();
-        s.add(orth);
+        //decide if we are on the left or right side of the wall
+        Vector vel = this.velocity.copy();
 
-        Line wall_reset = new Line(s,line.getDirection_vec());
-        Line center_reset = new Line(this.center, this.velocity);
+        //we have to go "backwards" on the trajectory of the ball
+        vel.flip();
+
+        //check if the vectors point in the same direction and flip if not (so we reset the position onto the correct side of the wall)
+        float dotProd = Physics.dotProduct(vel,orth);
+        if (dotProd < 0) {
+            orth.flip();
+        }
+
+        //construct the support vector of the line parallel to the wall
+        Vector sup = line.getSupport_vec().copy();
+        //add the offset (radius +1)
+        sup.add(orth);
+
+        Line wall_reset = new Line(sup,line.getDirection_vec());
+        Line center_reset = new Line(this.center, vel);
 
         this.center = center_reset.intersects(wall_reset);
     }
