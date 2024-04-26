@@ -1,6 +1,7 @@
 package Game.Structures;
 
 import Physics.*;
+
 import java.awt.*;
 
 /**
@@ -8,7 +9,7 @@ import java.awt.*;
  */
 public class Ball extends Circle {
     private int weight = 170; //in gramm
-    private Vector velocity = new Vector(0,0);
+    private Vector velocity = new Vector(0, 0);
     private BallNumber number;
     private Color color;
     private boolean inGame = false;
@@ -22,11 +23,10 @@ public class Ball extends Circle {
     }
 
 
-
-
     /**
      * Simulates a collision with a wall
      *  TODO: Fix collision Bug. -> if ball collides and is "inside" the wall, reset position to the realistic (line/circumference) collision point.
+     *
      * @param wall
      */
     public void collision(Wall wall) {
@@ -45,7 +45,7 @@ public class Ball extends Circle {
         Vector b1 = b2.getOrthogonal();
 
         //calculate the lc to determine how ball is reflected
-        Vector lc_velocity = Physics.solveLS(b1,b2,this.velocity);
+        Vector lc_velocity = Physics.solveLS(b1, b2, this.velocity);
 
         Vector velocity_new = b1.copy();
         velocity_new.scale(lc_velocity.x);
@@ -75,9 +75,15 @@ public class Ball extends Circle {
      * simulates the collision with another ball.
      *  TODO: Fix collision Bug. -> if ball collides and is "inside" the other ball, reset positions to the realistic (insersection of balls) collision point.
      *  //TODO: calculate backwards where the spheres start to intersect and reset centers depending on their velocity
+     *
      * @param ball
      */
     public void collision(Ball ball) {
+        //break if balls don't intersect
+        if (!super.intersects(ball)) {
+            return;
+        }
+
         // We want to build a base with the collision-tangent as the first base vector and
         // the collision-normal as the second base vector to calculate exchanged velocities.
 
@@ -86,45 +92,45 @@ public class Ball extends Circle {
         b2.sub(this.center);
         // b2 => tc + v = to => to-tc = v
 
-        //check if balls collide.
-        if (b2.length() <= (ball.getRadius() + this.getRadius())) {
 
-            //normalize, so the vectors are not scaled.
-            b2.normalize();
+        //normalize, so the vectors are not scaled.
+        b2.normalize();
 
-            //construct an orthonormal vector (on the right-hand-side) of the normal vector.
-            Vector b1 = new Vector(0, 0);
-            b1.x = b2.y;
-            b1.y = b2.x * -1;
+        //construct an orthonormal vector (on the right-hand-side) of the normal vector.
+        Vector b1 = new Vector(0, 0);
+        b1.x = b2.y;
+        b1.y = b2.x * -1;
 
-            //determine the linear-combination of the velocity vectors using the normal/orthogonal vectors as the base
-            Vector lc_vt = Physics.solveLS(b1, b2,this.velocity);
-            Vector lc_vo = Physics.solveLS(b1, b2, ball.velocity);
+        //determine the linear-combination of the velocity vectors using the normal/orthogonal vectors as the base
+        Vector lc_vt = Physics.solveLS(b1, b2, this.velocity);
+        Vector lc_vo = Physics.solveLS(b1, b2, ball.velocity);
 
 
             /*
-                if two spheres collide, the parts of the velocity-vectors, that are aligned with the normal vector,
-                are exchanged between the spheres. The parts of the velocity-vectors that are aligned with the orthogonal
-                vector are not exchanged.
+                if two spheres collide, the parts of the velocity-vectors, that are aligned with the collision-normal,
+                are exchanged between the spheres. The parts of the velocity-vectors that are aligned with
+                the collision tangent are not exchanged.
              */
 
-            //update the velocity accordingly
-            Vector vt_new = b1.copy();
-            vt_new.scale(lc_vt.x);
-            Vector buf = b2.copy();
-            buf.scale(lc_vo.y);
-            vt_new.add(buf);
+        //update the velocity accordingly
+        Vector vt_new = b1.copy();
+        vt_new.scale(lc_vt.x);
+        Vector buf = b2.copy();
+        buf.scale(lc_vo.y);
+        vt_new.add(buf);
 
-            this.velocity = vt_new;
+        //resetPositionBB();
 
-            Vector vo_new = b1.copy();
-            vo_new.scale(lc_vo.x);
-            buf = b2.copy();
-            buf.scale(lc_vt.y);
-            vo_new.add(buf);
+        this.velocity = vt_new;
 
-            ball.setVelocity(vo_new);
-        }
+        Vector vo_new = b1.copy();
+        vo_new.scale(lc_vo.x);
+        buf = b2.copy();
+        buf.scale(lc_vt.y);
+        vo_new.add(buf);
+
+        ball.setVelocity(vo_new);
+
     }
 
 
@@ -186,7 +192,7 @@ public class Ball extends Circle {
         vel.flip();
 
         //check if the vectors point in the same direction and flip if not (so we reset the position onto the correct side of the wall)
-        float dotProd = Physics.dotProduct(vel,orth);
+        float dotProd = Physics.dotProduct(vel, orth);
         if (dotProd < 0) {
             orth.flip();
         }
@@ -196,10 +202,59 @@ public class Ball extends Circle {
         //add the offset (radius +1)
         sup.add(orth);
 
-        Line wall_reset = new Line(sup,line.getDirection_vec());
+        Line wall_reset = new Line(sup, line.getDirection_vec());
         Line center_reset = new Line(this.center, vel);
 
         this.center = center_reset.intersects(wall_reset);
+    }
+
+
+    /**
+     * resets the positions of the Balls after a collision
+     * the new position is the exact position where the balls would've collided if game-ticks were continous
+     *
+     * @param ball
+     */
+    private void resetPositionBB(Ball ball) {
+        //concept: follow the trajectory of both balls until the distance between both centers is equal to sum(radi)
+        // -> length (traj_ball_1 - traj_ball_2) = ball_1.radius + ball_2.radius
+
+        Vector B_S = this.center.copy();
+        B_S.sub(ball.center);
+
+        Vector B_V = this.velocity.copy();
+        B_V.flip();
+        B_V.add(ball.getVelocity());
+
+
+        float radii = this.getRadius() + ball.getRadius();
+
+        float A = (B_V.x * B_V.x) + (B_V.y * B_V.y);
+        float B = 2 * (B_S.x * B_V.x + B_S.y * B_V.y);
+        float C = (-1) * ((4 * radii * radii) - (B_S.x * B_S.x) - (B_S.y * B_S.y));
+
+        //ABC formula to solve for the lambdas
+        float[] lambdas = Physics.ABCformula(A,B,C);
+        float l;
+
+        if (lambdas[0] > 0) {
+            l = lambdas[0];
+        } else {
+            l = lambdas[1];
+        }
+
+        Vector update = this.velocity.copy();
+        update.flip();
+        update.scale(l);
+
+        this.center.add(update);
+
+        update = ball.getVelocity().copy();
+        update.flip();
+        update.scale(l);
+
+        ball.center.add(update);
+
     }
 }
 

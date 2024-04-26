@@ -25,9 +25,10 @@ public class Physics {
 
     /**
      * solves a Linear system with one solution
+     *
      * @param vec1 != (0,0)
      * @param vec2 != (0,0)
-     * @param sol the solution values of the system
+     * @param sol  the solution values of the system
      * @return
      */
     public static Vector solveLS(Vector vec1, Vector vec2, Vector sol) {
@@ -52,9 +53,9 @@ public class Physics {
 
         if (A != 0) {
             //first operation on row1
-            float step_1 = (C/A) * -1;
+            float step_1 = (C / A) * -1;
             //apply to other row
-            float buf1 = D + (step_1*B);
+            float buf1 = D + (step_1 * B);
             float buf2 = S_Y + (step_1 * S_X);
 
             if (buf1 == 0) {
@@ -68,7 +69,7 @@ public class Physics {
 
         } else if (B != 0) {
             L_2 = S_X / B;
-            L_1 = (S_Y - D*L_2) / C;
+            L_1 = (S_Y - D * L_2) / C;
 
         } else {
             System.out.println("vec1: " + vec1 + ", vec2: " + vec2 + ", sol: " + sol);
@@ -79,6 +80,36 @@ public class Physics {
         solution.y = L_2;
 
         return solution;
+    }
+
+    /**
+     * applies the ABC formula
+     *
+     * @param A
+     * @param B
+     * @param C
+     * @return null if no solution, or an array with the solutions
+     */
+    public static float[] ABCformula(float A, float B, float C) {
+
+        float discr = B * B - (4 * A * C);
+        if (discr < 0) {
+            return null;
+        }
+        discr = (float) Math.sqrt(discr);
+
+        float sol1 = ((-1) * B + discr) / (2 * A);
+        float sol2 = ((-1) * B - discr) / (2*A);
+
+        if (sol1 != sol2) {
+            float[] sol = new float[2];
+            sol[0] = sol1;
+            sol[1] = sol2;
+        } else {
+            float[] sol = new float[1];
+            sol[0] = sol1;
+        }
+        return null;
     }
 
 }

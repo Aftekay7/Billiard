@@ -212,4 +212,19 @@ public class BilliardTests {
         assertEquals(new Vector(5,5),lds);
     }
 
+
+    @Test
+    public void testABCformula () {
+        //no solution
+        float A = 1;
+        float B = 2;
+        float C = 2;
+
+        assertNull(Physics.ABCformula(A, B, C));
+
+        //1 solution
+        C = 1;
+        System.out.println();
+    }
+
 }
