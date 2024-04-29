@@ -256,5 +256,33 @@ public class Ball extends Circle {
         ball.center.add(update);
 
     }
+
+    /**
+     * another approach
+     */
+    public void resetPositionBB2 (Line line, Vector isec) {
+
+        Vector v1 = this.velocity.copy();
+        Vector v2 = line.getDirection_vec().copy();
+        float radii = 2 * this.getRadius() + 1;
+
+        float lambda = (float) Math.sqrt(Math.pow((-v1.x + v2.x), 2) + Math.pow((-v1.y + v2.y),2));
+
+        lambda = radii / lambda;
+
+        Vector ct_new = v1;
+        ct_new.scale(lambda);
+        ct_new.add(isec);
+
+        Vector co_new = v2;
+        co_new.scale(lambda);
+        co_new.add(isec);
+
+        System.out.println("ct_new" + ct_new);
+        System.out.println("co_new" + co_new);
+
+
+
+    }
 }
 
