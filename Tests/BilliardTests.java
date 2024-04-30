@@ -227,4 +227,19 @@ public class BilliardTests {
         System.out.println();
     }
 
+
+    @Test
+    public void testResetPosition() {
+        Ball b = new Ball(BallNumber.WHITE, Color.BLACK);
+        b.setCenter(10,80);
+        b.setVelocity(new Vector(30,-10));
+
+        Line line = new Line (new Vector(20,25),new Vector(40,10));
+        Line ball = new Line (b.getCenterCopy(),b.getVelocity());
+
+        Vector intersec = ball.intersects(line);
+
+        b.resetPositionBB2(line,intersec);
+    }
+
 }

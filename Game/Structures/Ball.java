@@ -234,7 +234,7 @@ public class Ball extends Circle {
         float C = (-1) * ((4 * radii * radii) - (B_S.x * B_S.x) - (B_S.y * B_S.y));
 
         //ABC formula to solve for the lambdas
-        float[] lambdas = Physics.ABCformula(A,B,C);
+        float[] lambdas = Physics.ABCformula(A, B, C);
         float l;
 
         if (lambdas[0] > 0) {
@@ -260,15 +260,32 @@ public class Ball extends Circle {
     /**
      * another approach
      */
-    public void resetPositionBB2 (Line line, Vector isec) {
+    public void resetPositionBB2(Line line, Vector isec) {
 
         Vector v1 = this.velocity.copy();
+        v1.flip();
         Vector v2 = line.getDirection_vec().copy();
+        v2.flip();
         float radii = 2 * this.getRadius() + 1;
 
-        float lambda = (float) Math.sqrt(Math.pow((-v1.x + v2.x), 2) + Math.pow((-v1.y + v2.y),2));
+        Vector v1_v2 = v1.copy();
+        v1.sub(v2);
 
-        lambda = radii / lambda;
+        Vector ic1 = this.center.copy();
+        ic1.sub(isec);
+
+        Vector ic2 = line.getSupport_vec().copy();
+        ic2.sub(isec);
+
+        Vector isec3 = ic1;
+        isec3.sub(ic2);
+
+        float A  = v1_v2.x*v1_v2.x + v1_v2.y*v1_v2.y;
+        float B = v1_v2.x * isec3.x + v1_v2.y * isec3.y;
+        float C = isec3.x * isec3.x * isec3.y * isec3.y;
+
+        float lambda = radii - B / A;
+        lambda /= A;
 
         Vector ct_new = v1;
         ct_new.scale(lambda);
@@ -280,7 +297,6 @@ public class Ball extends Circle {
 
         System.out.println("ct_new" + ct_new);
         System.out.println("co_new" + co_new);
-
 
 
     }
