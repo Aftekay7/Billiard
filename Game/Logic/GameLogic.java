@@ -9,7 +9,7 @@ import Physics.Vector;
 public class GameLogic {
 
     //ticks per second
-    private final int ticksPerSecond = 1;
+    private final int ticksPerSecond = 100;
     private final int tickSpeed = 1000 / ticksPerSecond;
     private Table table;
     private boolean running;
@@ -30,7 +30,7 @@ public class GameLogic {
         b.setVelocity(new Vector(30, 0));
 
         while (running) {
-            updatePositions();
+            //updatePositions();
             checkCollisions();
 
             try {
@@ -73,6 +73,7 @@ public class GameLogic {
         int index = 0;
         Collidable b = gameObj[0];
         while (b instanceof Ball ball) {
+            ((Ball) b).updatePos();
 
             for (Collidable c : gameObj) {
                 if (c instanceof Wall) {

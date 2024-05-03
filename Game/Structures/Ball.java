@@ -15,6 +15,7 @@ public class Ball extends Circle {
     private boolean inGame = false;
 
     private float brakes = 0.01F;
+
     /**
      * simulates a (central) hit on the ball and updates its position
      *
@@ -120,6 +121,8 @@ public class Ball extends Circle {
         buf.scale(lc_vo.y);
         vt_new.add(buf);
 
+        resetPositionBB(ball);
+
         this.velocity = vt_new;
 
         Vector vo_new = b1.copy();
@@ -218,42 +221,22 @@ public class Ball extends Circle {
         //concept: follow the trajectory of both balls until the distance between both centers is equal to sum(radi)
         // -> length (traj_ball_1 - traj_ball_2) = ball_1.radius + ball_2.radius
 
-        Vector B_S = this.center.copy();
-        B_S.sub(ball.center);
+        Vector S_1 = this.getCenter().copy();
+        Vector S_2 = ball.getCenter().copy();
+        Vector V_1 = this.velocity.copy();
+        Vector V_2 = ball.getVelocity().copy();
 
-        Vector B_V = this.velocity.copy();
-        B_V.flip();
-        B_V.add(ball.getVelocity());
+        float A = (float) (Math.pow(V_1.x - V_2.x, 2) + Math.pow(V_1.y + V_2.y, 2));
+        float B = (float) (V_1.x - V_2.x) * (S_1.x - S_2.x) + (V_1.y - V_2.y) * (S_1.y - S_2.y);
+        float C = (float) (Math.pow(S_1.x - S_2.x, 2) + Math.pow(S_1.y - S_2.y, 2));
 
+        C -= Math.pow(ball.getRadius() + this.getRadius(), 2);
 
-        float radii = this.getRadius() + ball.getRadius();
-
-        float A = (B_V.x * B_V.x) + (B_V.y * B_V.y);
-        float B = 2 * (B_S.x * B_V.x + B_S.y * B_V.y);
-        float C = (-1) * ((4 * radii * radii) - (B_S.x * B_S.x) - (B_S.y * B_S.y));
-
-        //ABC formula to solve for the lambdas
         float[] lambdas = Physics.ABCformula(A, B, C);
-        float l;
 
-        if (lambdas[0] > 0) {
-            l = lambdas[0];
-        } else {
-            l = lambdas[1];
+        for (float f : lambdas) {
+            System.out.println(f);
         }
-
-        Vector update = this.velocity.copy();
-        update.flip();
-        update.scale(l);
-
-        this.center.add(update);
-
-        update = ball.getVelocity().copy();
-        update.flip();
-        update.scale(l);
-
-        ball.center.add(update);
-
     }
 
     /**
@@ -317,31 +300,33 @@ public class Ball extends Circle {
 
         Vector vel_buf;
 
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 10; i++) {
             if (super.intersects(other)) {
-                vel_t.scale(0.75F);
+                vel_t.scale(0.5F);
                 cur_t.add(vel_t);
                 this.center = cur_t;
 
-                vel_o.scale(0.75F);
+                vel_o.scale(0.5F);
                 cur_o.add(vel_o);
                 other.setCenter(cur_o);
 
             } else {
-                vel_t.scale(0.75F);
+                vel_t.scale(0.5F);
                 cur_t.sub(vel_t);
                 this.center = cur_t;
 
-                vel_o.scale(0.75F);
+                vel_o.scale(0.5F);
                 cur_o.sub(vel_o);
                 other.setCenter(cur_o);
             }
         }
 
-        if (super.intersects(other)) {
+        while (super.intersects(other)) {
             this.center.add(vel_t);
             other.getCenter().add(vel_o);
         }
+
+
     }
 }
 

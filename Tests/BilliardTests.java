@@ -224,7 +224,13 @@ public class BilliardTests {
 
         //1 solution
         C = 1;
-        System.out.println();
+        assertEquals(-1,Physics.ABCformula(A,B,C)[0],delta);
+
+        //2 solutions
+        C = 0;
+        float[] sol = Physics.ABCformula(A,B,C);
+        assertEquals(0,sol[0],delta);
+        assertEquals(-2,sol[1],delta);
     }
 
 

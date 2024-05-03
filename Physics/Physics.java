@@ -105,11 +105,12 @@ public class Physics {
             float[] sol = new float[2];
             sol[0] = sol1;
             sol[1] = sol2;
+            return sol;
         } else {
             float[] sol = new float[1];
             sol[0] = sol1;
+            return sol;
         }
-        return null;
     }
 
 }
