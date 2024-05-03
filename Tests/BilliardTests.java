@@ -230,16 +230,28 @@ public class BilliardTests {
 
     @Test
     public void testResetPosition() {
-        Ball b = new Ball(BallNumber.WHITE, Color.BLACK);
-        b.setCenter(10,80);
-        b.setVelocity(new Vector(30,-10));
+        Ball b1 = new Ball(BallNumber.WHITE, Color.BLACK);
+        Ball b2 = new Ball(BallNumber.FIVE, Color.WHITE);
+        b1.setCenter(10,80);
+        b1.setVelocity(new Vector(30,-10));
 
-        Line line = new Line (new Vector(20,25),new Vector(40,10));
-        Line ball = new Line (b.getCenterCopy(),b.getVelocity());
+        b2.setCenter(20,25);
+        b2.setVelocity(new Vector(40,10));
 
-        Vector intersec = ball.intersects(line);
+        Vector c = b1.getCenter().copy();
+        c.sub(b2.getCenter());
+        System.out.println("dist pre: " + c.length());
 
-        b.resetPositionBB2(line,intersec);
+
+        b1.collision(b2);
+        System.out.println("B1_c: " + b1.getCenter());
+        System.out.println("B1_v: " + b1.getVelocity());
+        System.out.println("B2_c: " + b2.getCenter());
+        System.out.println("B2_v: " + b2.getVelocity());
+
+        c = b1.getCenter().copy();
+        c.sub(b2.getCenter());
+        System.out.println("dist post: " + c.length());
     }
 
 }

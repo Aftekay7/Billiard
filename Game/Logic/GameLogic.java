@@ -9,7 +9,7 @@ import Physics.Vector;
 public class GameLogic {
 
     //ticks per second
-    private final int ticksPerSecond = 100;
+    private final int ticksPerSecond = 1;
     private final int tickSpeed = 1000 / ticksPerSecond;
     private Table table;
     private boolean running;
@@ -27,34 +27,38 @@ public class GameLogic {
         this.table.useTriangle();
 
         Ball b = (Ball) table.getGameObjects()[0];
-        b.setVelocity(new Vector(30,0));
+        b.setVelocity(new Vector(30, 0));
 
         while (running) {
             updatePositions();
+            checkCollisions();
+
+            try {
+                Thread.sleep(tickSpeed);
+            } catch (
+                    InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
 
     /**
-     *  Updates the position/velocities of the balls and checks for collisions.
+     * Updates the position/velocities of the balls and checks for collisions.
      */
     public void updatePositions() {
         Collidable[] gameObj = this.table.getGameObjects();
-
-        for (Collidable c : gameObj) {
-            if (c instanceof Ball) {
-                Ball b = (Ball) c;
-                if (b.isInGame()) {
-                    b.updatePos();
-                    checkCollisions(b);
-                }
+        Ball b;
+        int index = 0;
+        Collidable c = gameObj[index];
+        while (c instanceof Ball) {
+            b = (Ball) c;
+            if (b.isInGame()) {
+                b.updatePos();
             }
-        }
 
-        try {
-            Thread.sleep(tickSpeed); // Verzögerung von 1000 Millisekunden (1 Sekunde)
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            index++;
+            c = gameObj[index];
         }
 
     }
@@ -62,19 +66,28 @@ public class GameLogic {
 
     /**
      * iterates over all (other) objects that are used in the game and checks for collisions.
-     * @param b
      */
-    private void checkCollisions(Ball b) {
+    private void checkCollisions() {
         Collidable[] gameObj = table.getGameObjects();
 
-        for (Collidable c : gameObj) {
-            if (c instanceof Wall) {
-                b.collision((Wall) c);
+        int index = 0;
+        Collidable b = gameObj[0];
+        while (b instanceof Ball ball) {
 
-            } else if (!b.equals(c) && ((Ball) c).isInGame()) {
-                b.collision((Ball) c);
+            for (Collidable c : gameObj) {
+                if (c instanceof Wall) {
+                    ball.collision((Wall) c);
+
+                } else if (!b.equals(c) && ((Ball) c).isInGame()) {
+                    ball.collision((Ball) c);
+                }
             }
+
+
+            index++;
+            b = gameObj[index];
         }
+
 
 
     }

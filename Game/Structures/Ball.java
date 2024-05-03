@@ -14,6 +14,7 @@ public class Ball extends Circle {
     private Color color;
     private boolean inGame = false;
 
+    private float brakes = 0.01F;
     /**
      * simulates a (central) hit on the ball and updates its position
      *
@@ -63,8 +64,6 @@ public class Ball extends Circle {
     }
 
     public void updatePos() {
-        float brakes = 0.0027F;
-        brakes = 0;
         this.center.add(this.velocity);
         this.velocity.x -= (this.velocity.x * brakes);
         this.velocity.y -= (this.velocity.y * brakes);
@@ -83,6 +82,8 @@ public class Ball extends Circle {
         if (!super.intersects(ball)) {
             return;
         }
+
+        resetPositionBB3(ball);
 
         // We want to build a base with the collision-tangent as the first base vector and
         // the collision-normal as the second base vector to calculate exchanged velocities.
@@ -118,8 +119,6 @@ public class Ball extends Circle {
         Vector buf = b2.copy();
         buf.scale(lc_vo.y);
         vt_new.add(buf);
-
-        //resetPositionBB();
 
         this.velocity = vt_new;
 
@@ -280,7 +279,7 @@ public class Ball extends Circle {
         Vector isec3 = ic1;
         isec3.sub(ic2);
 
-        float A  = v1_v2.x*v1_v2.x + v1_v2.y*v1_v2.y;
+        float A = v1_v2.x * v1_v2.x + v1_v2.y * v1_v2.y;
         float B = v1_v2.x * isec3.x + v1_v2.y * isec3.y;
         float C = isec3.x * isec3.x * isec3.y * isec3.y;
 
@@ -299,6 +298,50 @@ public class Ball extends Circle {
         System.out.println("co_new" + co_new);
 
 
+    }
+
+    /**
+     * Resets the position by a fraction of velocity until we have a approximation of the actual collision position
+     */
+    public void resetPositionBB3(Ball other) {
+        //get the current positions of the centers
+        Vector cur_t = this.center.copy();
+        Vector cur_o = other.getCenterCopy();
+        Vector vel_t = this.velocity.copy();
+        vel_t.flip();
+        Vector vel_o = other.getVelocity().copy();
+        vel_o.flip();
+
+        cur_t.add(vel_t);
+        cur_o.add(vel_o);
+
+        Vector vel_buf;
+
+        for (int i = 0; i < 20; i++) {
+            if (super.intersects(other)) {
+                vel_t.scale(0.75F);
+                cur_t.add(vel_t);
+                this.center = cur_t;
+
+                vel_o.scale(0.75F);
+                cur_o.add(vel_o);
+                other.setCenter(cur_o);
+
+            } else {
+                vel_t.scale(0.75F);
+                cur_t.sub(vel_t);
+                this.center = cur_t;
+
+                vel_o.scale(0.75F);
+                cur_o.sub(vel_o);
+                other.setCenter(cur_o);
+            }
+        }
+
+        if (super.intersects(other)) {
+            this.center.add(vel_t);
+            other.getCenter().add(vel_o);
+        }
     }
 }
 

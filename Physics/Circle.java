@@ -70,4 +70,6 @@ public class Circle extends Collidable {
     public void setAnkerPoint(Vector vec) {
         this.center = vec;
     }
+
+    public Vector getCenter () {return this.center;}
 }

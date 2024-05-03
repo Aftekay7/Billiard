@@ -34,8 +34,6 @@ public class Table {
         this.color_walls = new Color(120, 80, 0);
         this.color_holes = new Color(0, 0, 0);
 
-        //useTriangle();
-
 
     }
 
@@ -55,22 +53,22 @@ public class Table {
         int radius = b.getRadius();
         int diameter = radius * 2;
 
-        Vector P_0 = new Vector(playfield_WIDTH / 4, playfield_HEIGHT / 2);
-        Vector P_1 = new Vector((playfield_WIDTH * 3) / 4, playfield_HEIGHT / 2);
-        Vector P_2 = new Vector(P_1.x + diameter, P_1.y - radius);
-        Vector P_3 = new Vector(P_2.x, P_2.y + diameter);
-        Vector P_4 = new Vector(P_2.x + diameter, P_1.y - diameter);
+        Vector P_0 = new Vector(playfield_WIDTH / 4F, playfield_HEIGHT / 2F);
+        Vector P_1 = new Vector((playfield_WIDTH * 3) / 4F, playfield_HEIGHT / 2F);
+        Vector P_2 = new Vector(P_1.x + diameter, P_1.y - radius - 10);
+        Vector P_3 = new Vector(P_2.x, P_2.y + diameter + 10);
+        Vector P_4 = new Vector(P_2.x + diameter, P_1.y - diameter-10);
         Vector P_5 = new Vector(P_4.x, P_1.y);
-        Vector P_6 = new Vector(P_5.x, P_1.y + diameter);
-        Vector P_7 = new Vector( P_4.x + diameter, P_4.y - radius);
+        Vector P_6 = new Vector(P_5.x, P_1.y + diameter+10);
+        Vector P_7 = new Vector( P_4.x + diameter, P_4.y - radius-10);
         Vector P_8 = new Vector(P_7.x, P_2.y);
         Vector P_9 = new Vector(P_7.x, P_3.y);
-        Vector P_10 = new Vector(P_7.x, P_9.y + diameter);
-        Vector P_11 = new Vector(P_7.x + diameter, P_7.y - radius);
+        Vector P_10 = new Vector(P_7.x, P_9.y + diameter+10);
+        Vector P_11 = new Vector(P_7.x + diameter, P_7.y - radius-10);
         Vector P_12 = new Vector(P_11.x, P_4.y);
         Vector P_13 = new Vector(P_11.x, P_5.y);
         Vector P_14 = new Vector(P_11.x, P_6.y);
-        Vector P_15 = new Vector(P_11.x, P_14.y + diameter);
+        Vector P_15 = new Vector(P_11.x, P_14.y + diameter + 10 );
 
         //P
         Vector[] coords = {P_0, P_11, P_5, P_15, P_1, P_2,P_3,P_4,P_6,P_7,P_8,P_9,P_10,P_12,P_13,P_14};
