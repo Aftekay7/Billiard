@@ -27,7 +27,11 @@ public class GameLogic {
         b.setVelocity(new Vector(30, 0));
 
         while (running) {
+            long start = System.currentTimeMillis();
             updatePositions();
+            long end = System.currentTimeMillis();
+
+            System.out.println(end - start);
 
             try {
                 Thread.sleep(tickSpeed);
@@ -75,78 +79,4 @@ public class GameLogic {
             }
         }
     }
-
-
-    /**
-     * iterates over all (other) objects that are used in the game and checks for collisions.
-     * TODO
-     */
-    /*
-    private void checkCollisions() {
-        Collidable[] gameObj = table.getGameObjects();
-
-        Ball col1 = null;
-        Collidable col2 = null;
-        float ld;
-        float ld_min = 2;
-
-        int index = 0;
-        Collidable b = gameObj[0];
-
-        //check for all balls for the first collision that happens
-        while (b instanceof Ball ball) {
-            ball = (Ball) b;
-
-            for (Collidable c : gameObj) {
-                if (c instanceof Wall) {
-                    ld = ball.getEarliestCollision((Wall) c);
-                    if (ld < ld_min) {
-                        ld_min = ld;
-                        col1 = ball;
-                        col2 = c;
-                    }
-
-                } else if (!b.equals(c) && ((Ball) c).isInGame()) {
-                    ld = ball.getEarliestCollision((Ball) c);
-                    if (ld < ld_min) {
-                        ld_min = ld;
-                        col1 = ball;
-                        col2 = c;
-                    }
-                }
-            }
-            index++;
-            b = gameObj[index];
-        }
-
-        if (col1 != null && ld_min <= 1) {
-            if (col2 instanceof Ball) {
-                Ball ball = (Ball) col2;
-                col1.collision(ball);
-            } else {
-                Wall wall = (Wall) col2;
-                col1.collision(wall);
-            }
-
-
-            index = 0;
-            b = gameObj[0];
-            while (b instanceof Ball) {
-
-                if (b != col1 && b != col2) {
-                    ((Ball) b).updatePos();
-                }
-
-                index++;
-                b = gameObj[index];
-            }
-        } else {
-            updatePositions();
-        }
-
-
-    }
-    */
-
-
 }

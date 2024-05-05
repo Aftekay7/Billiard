@@ -66,6 +66,7 @@ public class Ball extends Circle {
     }
 
     public void updatePos() {
+        brakes = 0;
         this.center.add(this.velocity);
         this.velocity.x -= (this.velocity.x * brakes);
         this.velocity.y -= (this.velocity.y * brakes);

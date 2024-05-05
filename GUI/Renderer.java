@@ -2,6 +2,7 @@ package GUI;
 
 import Game.Structures.Ball;
 import Game.Structures.Table;
+import Game.Structures.Wall;
 import Physics.Collidable;
 import Physics.Vector;
 
@@ -30,7 +31,7 @@ public class Renderer extends JFrame {
     private final int table_rendered_width = gameField_rendered_width + 2 * table_wall_rendered_width;
     private final int table_rendered_height = gameField_rendered_height + 2 * table_wall_rendered_width;
     private Vector[] gameField_rendered_edges = new Vector[4];
-    private Vector[] table_rendered_edges = new Vector[4];
+    private Vector[][] table_rendered_edges;
     private Vector[] table_marks = new Vector[4];       // { headline_top, headline_bot, headpoint, footpoint }
     private static final int FPS = 100;
 
@@ -41,11 +42,15 @@ public class Renderer extends JFrame {
         this.holeColor = table.getColor_holes();
         this.table = table;
         this.window = new Window();
-        getTableEdges();
+
+
+        getTableCoords();
         getGameFieldEdges();
         getMarks();
 
+
         SwingUtilities.invokeLater(() -> {
+
             this.jpanel = new JPanel() {
                 @Override
                 public void paintComponent(Graphics g) {
@@ -78,9 +83,14 @@ public class Renderer extends JFrame {
     /**
      * renders the table (game-field + walls)
      * TODO: maybe change casts to rounding operation, animations might look smoother
+     *
      * @param g
      */
     private void renderTable(Graphics g) {
+        for (Vector[] wall : table_rendered_edges) {
+            System.out.println(wall[0]);
+            System.out.println(wall[1]);
+        }
         //draw the playing field
         g.setColor(tableColor);
         g.fillRect((int) gameField_rendered_edges[0].x, (int) gameField_rendered_edges[0].y, gameField_rendered_width, gameField_rendered_height);
@@ -96,17 +106,9 @@ public class Renderer extends JFrame {
         //draw the walls
         g.setColor(wallColor);
 
-        //left wall
-        g.fillRect((int) table_rendered_edges[0].x, (int) table_rendered_edges[0].y, table_wall_rendered_width, table_rendered_height);
-
-        //right wall
-        g.fillRect((int) (table_rendered_edges[1].x - table_wall_rendered_width), (int) table_rendered_edges[0].y, table_wall_rendered_width, table_rendered_height);
-
-        //(in the rendered version) upper wall
-        g.fillRect((int) table_rendered_edges[0].x, (int) table_rendered_edges[0].y, table_rendered_width, table_wall_rendered_width);
-
-        //(in the rendered version) lower wall
-        g.fillRect((int) table_rendered_edges[3].x, (int) (table_rendered_edges[3].y - table_wall_rendered_width), table_rendered_width, table_wall_rendered_width);
+        for (Vector[] wall : table_rendered_edges) {
+            g.drawLine((int) wall[0].x, (int) wall[0].y, (int) wall[1].x, (int) wall[1].y);
+        }
 
         //TODO: Add the holes
     }
@@ -117,7 +119,6 @@ public class Renderer extends JFrame {
         Collidable c = gameObj[0];
         Ball b;
         int index = 0;
-        //System.out.println("\nThe Coords of the different Balls are:");
         while (c instanceof Ball) {
             b = (Ball) c;
 
@@ -173,30 +174,55 @@ public class Renderer extends JFrame {
     }
 
 
-    private void getTableEdges() {
-        int x = (this.window.getWidth() - (gameField_rendered_width + table_wall_rendered_width * 2)) / 2 - 1;
-        int y = (this.window.getHeight() - (gameField_rendered_height + table_wall_rendered_width * 2)) / 2 - 1;
+    /**
+     * testversion for the walls with holes
+     */
+    private void getTableCoords() {
+        int x =(this.window.getWidth() - (gameField_rendered_width + table_wall_rendered_width * 2)) / 2 - 1;
+        int y = this.window.getHeight() - ((this.window.getHeight() - (gameField_rendered_height + table_wall_rendered_width * 2)) / 2) - 1;
 
-        Vector top_left = new Vector(x, y);
-        this.table_rendered_edges[0] = top_left;
 
-        Vector top_right = top_left.copy();
-        top_right.x += gameField_rendered_width + 2 * table_wall_rendered_width;
-        this.table_rendered_edges[1] = top_right;
+        Vector offset = new Vector(x + table_wall_rendered_width, y);
 
-        Vector bot_right = top_right.copy();
-        bot_right.y += gameField_rendered_height + 2 * table_wall_rendered_width;
-        this.table_rendered_edges[2] = bot_right;
 
-        Vector bot_left = top_left.copy();
-        bot_left.y += gameField_rendered_height + 2 * table_wall_rendered_width;
-        this.table_rendered_edges[3] = bot_left;
+        Collidable[] objects = table.getGameObjects();
+
+        Collidable c = objects[0];
+        int index = 0;
+
+        while (c instanceof Ball) {
+            index++;
+            c = objects[index];
+        }
+        int w = 0;
+        Vector[][] wallEdges = new Vector[objects.length - index][2];
+
+        for (int i = index; i < objects.length; i++) {
+            Wall wall = (Wall) objects[i];
+            Vector e1 = wall.getEdges()[0].copy();
+            Vector e2 = wall.getEdges()[1].copy();
+
+            scaleCoords(e1);
+            scaleCoords(e2);
+
+            e1.y *= -1;
+            e2.y *= -1;
+
+            e1.add(offset);
+            e2.add(offset);
+
+            wallEdges[w] = new Vector[]{e1, e2};
+            w++;
+        }
+
+        this.table_rendered_edges = wallEdges;
+
+
     }
 
     private void getGameFieldEdges() {
-        //top left corner of the table (rendered)
-        int x = (int) table_rendered_edges[0].x;
-        int y = (int) table_rendered_edges[0].y;
+        int x = (this.window.getWidth() - (gameField_rendered_width + table_wall_rendered_width * 2)) / 2 - 1;
+        int y = (this.window.getHeight() - (gameField_rendered_height + table_wall_rendered_width * 2)) / 2 - 1;
 
         x += table_wall_rendered_width;
         y += table_wall_rendered_width;

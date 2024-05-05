@@ -57,24 +57,24 @@ public class Table {
         Vector P_1 = new Vector((playfield_WIDTH * 3) / 4F, playfield_HEIGHT / 2F);
         Vector P_2 = new Vector(P_1.x + diameter, P_1.y - radius - 10);
         Vector P_3 = new Vector(P_2.x, P_2.y + diameter + 10);
-        Vector P_4 = new Vector(P_2.x + diameter, P_1.y - diameter-10);
+        Vector P_4 = new Vector(P_2.x + diameter, P_1.y - diameter - 10);
         Vector P_5 = new Vector(P_4.x, P_1.y);
-        Vector P_6 = new Vector(P_5.x, P_1.y + diameter+10);
-        Vector P_7 = new Vector( P_4.x + diameter, P_4.y - radius-10);
+        Vector P_6 = new Vector(P_5.x, P_1.y + diameter + 10);
+        Vector P_7 = new Vector(P_4.x + diameter, P_4.y - radius - 10);
         Vector P_8 = new Vector(P_7.x, P_2.y);
         Vector P_9 = new Vector(P_7.x, P_3.y);
-        Vector P_10 = new Vector(P_7.x, P_9.y + diameter+10);
-        Vector P_11 = new Vector(P_7.x + diameter, P_7.y - radius-10);
+        Vector P_10 = new Vector(P_7.x, P_9.y + diameter + 10);
+        Vector P_11 = new Vector(P_7.x + diameter, P_7.y - radius - 10);
         Vector P_12 = new Vector(P_11.x, P_4.y);
         Vector P_13 = new Vector(P_11.x, P_5.y);
         Vector P_14 = new Vector(P_11.x, P_6.y);
-        Vector P_15 = new Vector(P_11.x, P_14.y + diameter + 10 );
+        Vector P_15 = new Vector(P_11.x, P_14.y + diameter + 10);
 
         //P
-        Vector[] coords = {P_0, P_11, P_5, P_15, P_1, P_2,P_3,P_4,P_6,P_7,P_8,P_9,P_10,P_12,P_13,P_14};
+        Vector[] coords = {P_0, P_11, P_5, P_15, P_1, P_2, P_3, P_4, P_6, P_7, P_8, P_9, P_10, P_12, P_13, P_14};
 
         //white Ball
-        b.setCenter((int) P_0.x,(int) P_0.y);
+        b.setCenter((int) P_0.x, (int) P_0.y);
         b.setInGame(true);
 
         //full 1 (yellow)
@@ -223,42 +223,63 @@ public class Table {
      * @return Array of walls
      */
     private Collidable[] createWalls() {
-        Collidable[] wallSet = new Collidable[4];
+        Collidable[] wallSet = new Collidable[6];
         Vector e1;
         Vector e2;
 
         //init all 6 walls, dependent on the Coordinates
 
-        //wall 1 (left short side)
-        e1 = new Vector(0, 0);
-        e2 = new Vector(0, 1120);
+        //wall 1 (left vertical side)
+        e1 = new Vector(0, 95);
+        e2 = new Vector(0, 1025);
         Vector[] edges_w1 = {e1, e2};
         wallSet[0] = new Wall(edges_w1);
 
-        //wall 2 (right short side)
-        e1 = new Vector(2240, 0);
-        e2 = new Vector(2240, 1120);
+        //wall 2 (right vertical side)
+        e1 = new Vector(2240, 95);
+        e2 = new Vector(2240, 1025);
         Vector[] edges_w2 = {e1, e2};
         wallSet[1] = new Wall(edges_w2);
 
-        //wall 3 (lower long side)
+        /*
+        //wall 3 (lower horizontal side)
         e1 = new Vector(0, 0);
         e2 = new Vector(2240, 0);
         Vector[] edges_w3 = {e1, e2};
         wallSet[2] = new Wall(edges_w3);
+         */
 
-        //wall 4 (upper long side)
+        /*
+        //wall 4 (upper horizontal side)
         e1 = new Vector(0, 1120);
         e2 = new Vector(2240, 1120);
         Vector[] edges_w4 = {e1,e2};
         wallSet[3] = new Wall(edges_w4);
+         */
 
-        //wall 5 (split long side)
-        //TODO
+        //wall 5 (split horizontal side top left)
+        e1 = new Vector(95, 1120);
+        e2 = new Vector(1048, 1120);
+        Vector[] edges_w4_1 = {e1, e2};
+        wallSet[2] = new Wall(edges_w4_1);
 
-        //wall 6 (split long side)
-        //TODO
+        //wall 6 (split horizontal side top right)
+        e1 = new Vector(1193, 1120);
+        e2 = new Vector(2145, 1120);
+        Vector[] edges_w4_2 = {e1, e2};
+        wallSet[3] = new Wall(edges_w4_2);
 
+        //wall 7 (split horizontal side bottom left)
+        e1 = new Vector(95, 0);
+        e2 = new Vector(1048, 0);
+        Vector[] edges_w3_1 = {e1, e2};
+        wallSet[4] = new Wall(edges_w3_1);
+
+        //wall 8 (split horizontal side bottom right)
+        e1 = new Vector(1193, 0);
+        e2 = new Vector(2145, 0);
+        Vector[] edges_w3_2 = {e1, e2};
+        wallSet[5] = new Wall(edges_w3_2);
 
         return wallSet;
     }
@@ -283,9 +304,9 @@ public class Table {
     private Collidable[] createTestBall() {
         Collidable[] c = new Collidable[1];
         Ball b = new Ball(BallNumber.WHITE, Color.WHITE);
-        b.setCenter(new Vector(30,30));
+        b.setCenter(new Vector(30, 30));
         b.setInGame(true);
-        b.setVelocity(new Vector(10,10));
+        b.setVelocity(new Vector(10, 10));
         c[0] = b;
         return c;
     }

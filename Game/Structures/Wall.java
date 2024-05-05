@@ -70,4 +70,9 @@ public class Wall extends Line {
         //line doesn't intersect within the wall-edges
         return null;
     }
+
+
+    public Vector[] getEdges () {
+        return this.edges;
+    }
 }
