@@ -21,5 +21,7 @@ public class Window extends JFrame {
     public void setGamePanel(JPanel gamePanel) {
         this.gamePanel = gamePanel;
         add(gamePanel);
+        revalidate();
+        repaint();
     }
 }

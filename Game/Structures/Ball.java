@@ -3,6 +3,7 @@ package Game.Structures;
 import Physics.*;
 
 import java.awt.*;
+import java.lang.reflect.Array;
 
 /**
  * Implements a Ball
@@ -121,7 +122,7 @@ public class Ball extends Circle {
         buf.scale(lc_vo.y);
         vt_new.add(buf);
 
-        resetPositionBB(ball);
+        //resetPositionBB(ball);
 
         this.velocity = vt_new;
 
@@ -168,7 +169,6 @@ public class Ball extends Circle {
         this.velocity = velocity;
     }
 
-
     public Vector getVelocity() {
         return velocity;
     }
@@ -212,76 +212,81 @@ public class Ball extends Circle {
 
 
     /**
-     * resets the positions of the Balls after a collision
-     * the new position is the exact position where the balls would've collided if game-ticks were continous
+     * returns the scalar of the direction vectors of the earliest touching-point of the given balls
      *
      * @param ball
      */
-    private void resetPositionBB(Ball ball) {
+    public void resetPosition(Ball ball) {
         //concept: follow the trajectory of both balls until the distance between both centers is equal to sum(radi)
         // -> length (traj_ball_1 - traj_ball_2) = ball_1.radius + ball_2.radius
 
-        Vector S_1 = this.getCenter().copy();
-        Vector S_2 = ball.getCenter().copy();
+        Vector S_1 = this.getCenter();
+        Vector S_2 = ball.getCenter();
         Vector V_1 = this.velocity.copy();
+        V_1.flip();
         Vector V_2 = ball.getVelocity().copy();
+        V_2.flip();
 
-        float A = (float) (Math.pow(V_1.x - V_2.x, 2) + Math.pow(V_1.y + V_2.y, 2));
-        float B = (float) (V_1.x - V_2.x) * (S_1.x - S_2.x) + (V_1.y - V_2.y) * (S_1.y - S_2.y);
+        float A = (float) (Math.pow(V_1.x - V_2.x, 2) + Math.pow(V_1.y - V_2.y, 2));
+        float B = 2 * ((V_1.x - V_2.x) * (S_1.x - S_2.x) + (V_1.y - V_2.y) * (S_1.y - S_2.y));
         float C = (float) (Math.pow(S_1.x - S_2.x, 2) + Math.pow(S_1.y - S_2.y, 2));
 
-        C -= Math.pow(ball.getRadius() + this.getRadius(), 2);
+        float radii = (float) (Math.pow(ball.getRadius() + this.getRadius(), 2));
 
-        float[] lambdas = Physics.ABCformula(A, B, C);
+        float[] lds1 = Physics.ABCformula(A, B, C - radii);
+        float[] lds2 = Physics.ABCformula(A, B, C + radii);
+        float[][] lds = {lds1, lds2};
 
-        for (float f : lambdas) {
-            System.out.println(f);
+        float min = 2;
+        for (int i = 0; i < 2; i++) {
+
+            if (lds[i] != null) {
+                for (float f : lds[i]) {
+                    if (f < min && f > 0) {
+                        min = f;
+                    }
+                }
+            }
+
+            if (lds1 == null && lds2 == null) {
+                throw new IllegalStateException("dunno weird case look at it");
+            }
         }
+
+        V_1.scale(min);
+        V_2.scale(min);
+        this.center.add(V_1);
+        ball.center.add(V_2);
+
     }
 
-    /**
-     * another approach
-     */
-    public void resetPositionBB2(Line line, Vector isec) {
 
-        Vector v1 = this.velocity.copy();
-        v1.flip();
-        Vector v2 = line.getDirection_vec().copy();
-        v2.flip();
-        float radii = 2 * this.getRadius() + 1;
+    public float getEarliestCollision(Wall wall) {
+        if (Physics.dotProduct(this.velocity,wall.getDirection_vec()) == 0) {
+            //trajectory is parallel to wall -> won't collide as we cant spawn inside the wall
+            return 2;
+        }
+        Vector offset = wall.getDirection_vec().getOrthogonal();
+        offset.normalize();
+        offset.scale(super.getRadius());
+        Vector sup = this.center.copy();
+        sup.add(offset);
 
-        Vector v1_v2 = v1.copy();
-        v1.sub(v2);
+        Vector col1 = sup;
+        Vector col2 = wall.getDirection_vec().copy();
+        col2.flip();
 
-        Vector ic1 = this.center.copy();
-        ic1.sub(isec);
+        Vector sup_wall = wall.getSupport_vec();
+        Vector sol = new Vector(sup_wall.x - sup.x, sup_wall.y - sup.y);
 
-        Vector ic2 = line.getSupport_vec().copy();
-        ic2.sub(isec);
+        Vector lds = Physics.solveLS(col1,col2,sol);
 
-        Vector isec3 = ic1;
-        isec3.sub(ic2);
-
-        float A = v1_v2.x * v1_v2.x + v1_v2.y * v1_v2.y;
-        float B = v1_v2.x * isec3.x + v1_v2.y * isec3.y;
-        float C = isec3.x * isec3.x * isec3.y * isec3.y;
-
-        float lambda = radii - B / A;
-        lambda /= A;
-
-        Vector ct_new = v1;
-        ct_new.scale(lambda);
-        ct_new.add(isec);
-
-        Vector co_new = v2;
-        co_new.scale(lambda);
-        co_new.add(isec);
-
-        System.out.println("ct_new" + ct_new);
-        System.out.println("co_new" + co_new);
+        return lds.x;
 
 
     }
+
+
 
     /**
      * Resets the position by a fraction of velocity until we have a approximation of the actual collision position
