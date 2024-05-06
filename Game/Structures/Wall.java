@@ -46,9 +46,26 @@ public class Wall extends Line {
         super.setDirection_vec(dir);
     }
 
-    @Override
-    public Vector intersects(Line lineOpp) {
-        Vector intersec = super.intersects(lineOpp);
+    /**
+     * returns the collision-point of the ball and the wall and null if they don't collide
+     * resets the position of the center accordingly
+     *
+     * @param ball
+     * @return
+     */
+    public Vector intersects(Ball ball) {
+
+        Line traj_center = null;
+        Vector intersec = null;
+
+        traj_center = new Line(ball.getCenter(), ball.getVelocity());
+        intersec = super.intersects(traj_center);
+
+
+        Vector orth = this.getDirection_vec().getOrthogonal();
+        orth.normalize();
+        orth.scale(ball.getRadius());
+        orth.flip();
 
         if (intersec == null) {
             //lines dont intersect
@@ -58,21 +75,79 @@ public class Wall extends Line {
 
             //edges are sorted by the x coordinate
             if (intersec.x >= edges[0].x && intersec.x <= edges[1].x) {
-                //lines intersect within the wall-edges
-                return intersec;
+                //center of ball hits the wall
+                ball.resetPosition(this);
+                orth.add(ball.getCenter());
+
+                return orth;
             }
 
         } else if (intersec.y >= edges[0].y && intersec.y <= edges[1].y) {
-            //line intersect within the wall-edges
-            return intersec;
+            //center of ball hits the wall
+            ball.resetPosition(this);
+            return orth;
 
+        } else {
+
+            Vector dist_1 = edges[0].copy();
+            Vector dist_2 = edges[1].copy();
+
+            dist_1.sub(intersec);
+            dist_2.sub(intersec);
+
+            float d1 = dist_1.length();
+            float d2 = dist_2.length();
+
+
+            Vector vel = ball.getVelocity().copy();
+            Vector sup = ball.getCenter().copy();
+            vel.flip();
+
+            if (d1 <= ball.getRadius() || d2 <= ball.getRadius()) {
+                Vector edge;
+                if (d1 < d2) {
+                    edge = edges[0];
+                } else {
+                    edge = edges[1];
+                }
+
+                sup.sub(edge);
+
+                float A = (vel.x * vel.x) + (vel.y * vel.y);
+                float B = 2 * (vel.x * sup.x + vel.y * sup.x);
+                float C = (sup.x * sup.x) + (sup.y * sup.y) - (ball.getRadius() * ball.getRadius());
+
+                float lds1[] = Physics.ABCformula(A, B, C);
+                float lds2[] = Physics.ABCformula(A, B, C);
+                float max = 0;
+
+                if (lds1 != null) {
+                    for (float ld : lds1) {
+                        if (ld > 0 && ld > max) {
+                            max = ld;
+                        }
+                    }
+                }
+                if (lds2 != null) {
+                    for (float ld : lds2) {
+                        if (ld > 0 && ld > max) {
+                            max = ld;
+                        }
+                    }
+                }
+
+
+                vel.scale(max);
+                ball.getCenter().add(vel);
+
+                return edge;
+            }
         }
-        //line doesn't intersect within the wall-edges
         return null;
     }
 
 
-    public Vector[] getEdges () {
+    public Vector[] getEdges() {
         return this.edges;
     }
 }

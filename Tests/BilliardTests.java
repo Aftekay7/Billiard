@@ -150,71 +150,71 @@ public class BilliardTests {
 
         b1.collision(b2);
 
-        assertEquals(new Vector(0,5), b2.getVelocity());
+        assertEquals(new Vector(0, 5), b2.getVelocity());
     }
 
 
     @Test
     public void testSolveLS() {
-        Vector vec1 = new Vector(1,1);
-        Vector vec2 = new Vector(-1,1);
+        Vector vec1 = new Vector(1, 1);
+        Vector vec2 = new Vector(-1, 1);
 
-        Vector sol1 = new Vector(-1,1);
-        Vector sol2 = new Vector(2,0);
+        Vector sol1 = new Vector(-1, 1);
+        Vector sol2 = new Vector(2, 0);
 
-        assertEquals(new Vector(0,1),Physics.solveLS(vec1,vec2,sol1));
-        assertEquals(new Vector(1,-1),Physics.solveLS(vec1,vec2,sol2));
+        assertEquals(new Vector(0, 1), Physics.solveLS(vec1, vec2, sol1));
+        assertEquals(new Vector(1, -1), Physics.solveLS(vec1, vec2, sol2));
 
     }
 
 
     @Test
-    public void testDotProductReturnOrthogonal () {
-        Vector vec1 = new Vector(0,1120);
-        Vector vec2 = new Vector(0,-25.50764F);
+    public void testDotProductReturnOrthogonal() {
+        Vector vec1 = new Vector(0, 1120);
+        Vector vec2 = new Vector(0, -25.50764F);
 
-        Vector vec3 = new Vector(2240,0);
-        Vector vec4 = new Vector(29.919F,0);
+        Vector vec3 = new Vector(2240, 0);
+        Vector vec4 = new Vector(29.919F, 0);
 
         float lengthSqd = vec1.length() * vec2.length();
 
-        float dotProd = Physics.dotProduct(vec1,vec2);
-        assertEquals(-1 * lengthSqd,dotProd,delta);
+        float dotProd = Physics.dotProduct(vec1, vec2);
+        assertEquals(-1 * lengthSqd, dotProd, delta);
 
-        dotProd = Physics.dotProduct(vec3,vec4);
+        dotProd = Physics.dotProduct(vec3, vec4);
         lengthSqd = vec3.length() * vec4.length();
-        assertEquals(lengthSqd,dotProd,delta);
+        assertEquals(lengthSqd, dotProd, delta);
     }
 
 
     @Test
-    public void testCompareCollisionIntersect () {
+    public void testCompareCollisionIntersect() {
         Ball b1 = new Ball(BallNumber.WHITE, Color.white);
-        b1.setVelocity(new Vector(5,5));
-        b1.setCenter(295,100);
+        b1.setVelocity(new Vector(5, 5));
+        b1.setCenter(295, 100);
 
         Vector[] edges = {new Vector(300, 0), new Vector(300, 100)};
         Wall wall = new Wall(edges);
 
         b1.collision(wall);
-        assertEquals(new Vector(-5,5),b1.getVelocity());
+        assertEquals(new Vector(-5, 5), b1.getVelocity());
 
     }
 
     @Test
-    public void testSolveLS2 () {
-        Vector sol = new Vector(5,5);
-        Vector v1 = new Vector(0,1);
-        Vector v2 = new Vector(1,0);
+    public void testSolveLS2() {
+        Vector sol = new Vector(5, 5);
+        Vector v1 = new Vector(0, 1);
+        Vector v2 = new Vector(1, 0);
 
-        Vector lds = Physics.solveLS(v1,v2,sol);
+        Vector lds = Physics.solveLS(v1, v2, sol);
 
-        assertEquals(new Vector(5,5),lds);
+        assertEquals(new Vector(5, 5), lds);
     }
 
 
     @Test
-    public void testABCformula () {
+    public void testABCformula() {
         //no solution
         float A = 1;
         float B = 2;
@@ -224,13 +224,13 @@ public class BilliardTests {
 
         //1 solution
         C = 1;
-        assertEquals(-1,Physics.ABCformula(A,B,C)[0],delta);
+        assertEquals(-1, Physics.ABCformula(A, B, C)[0], delta);
 
         //2 solutions
         C = 0;
-        float[] sol = Physics.ABCformula(A,B,C);
-        assertEquals(0,sol[0],delta);
-        assertEquals(-2,sol[1],delta);
+        float[] sol = Physics.ABCformula(A, B, C);
+        assertEquals(0, sol[0], delta);
+        assertEquals(-2, sol[1], delta);
     }
 
 
@@ -239,11 +239,11 @@ public class BilliardTests {
         Ball b1 = new Ball(BallNumber.WHITE, Color.BLACK);
         Ball b2 = new Ball(BallNumber.FIVE, Color.WHITE);
         b1.setRadius(1);
-        b1.setCenter(0,2);
-        b1.setVelocity(new Vector(-1,-1));
+        b1.setCenter(0, 2);
+        b1.setVelocity(new Vector(-1, -1));
 
-        b2.setCenter(0,-2);
-        b2.setVelocity(new Vector(-1,1));
+        b2.setCenter(0, -2);
+        b2.setVelocity(new Vector(-1, 1));
         b2.setRadius(1);
 
         Vector c = b1.getCenter().copy();
@@ -251,5 +251,66 @@ public class BilliardTests {
         System.out.println("dist pre: " + c.length());
 
         //System.out.println(b1.getEarliestCollision(b2));
+    }
+
+
+    @Test
+    public void testNewWalls() {
+        //wall 1 (left vertical side)
+        Vector e1 = new Vector(0, 95);
+        Vector e2 = new Vector(0, 1025);
+        Vector[] edges_w1 = {e1, e2};
+        Wall wall = new Wall(edges_w1);
+
+        Line traj = new Line(new Vector(10, 94), new Vector(-1, 0));
+
+        System.out.println(wall.intersects(traj));
+
+
+    }
+
+    @Test
+    public void testNewWalls2() {
+        Vector e1 = new Vector(95, 0);
+        Vector e2 = new Vector(1048, 0);
+        Vector[] edges_w1 = {e1, e2};
+        Wall wall = new Wall(edges_w1);
+        wall.setDirection_vec(new Vector(953, 0));
+        wall.setAnkerPoint(new Vector(95, 0));
+
+        Ball ball = new Ball(BallNumber.EIGHT, Color.BLACK);
+        ball.setCenter(2018.8342F, 26.314745F);
+        ball.setVelocity(new Vector(-14.704966F, -14.636152F));
+
+        ball.collision(wall);
+    }
+
+    @Test
+    public void testNewWalls3() {
+        Vector e1 = new Vector(95, 0);
+        Vector e2 = new Vector(1048, 0);
+        Vector[] edges_w1 = {e1, e2};
+        Wall wall = new Wall(edges_w1);
+
+        Ball ball = new Ball(BallNumber.EIGHT, Color.BLACK);
+        ball.setCenter(1854, 521);
+        ball.setVelocity(new Vector(0, 0));
+
+        ball.collision(wall);
+    }
+
+
+    @Test
+    public void testNewWalls4() {
+        Vector e1 = new Vector(0, 95);
+        Vector e2 = new Vector(0, 1025);
+        Vector[] edges_w1 = {e1, e2};
+        Wall wall = new Wall(edges_w1);
+
+        Ball ball = new Ball(BallNumber.EIGHT, Color.BLACK);
+        ball.setCenter(10, 500);
+        ball.setVelocity(new Vector(-10, 0));
+
+        ball.collision(wall);
     }
 }

@@ -17,6 +17,7 @@ public class Ball extends Circle {
 
     private float brakes = 0.01F;
 
+
     /**
      * simulates a (central) hit on the ball and updates its position
      *
@@ -33,15 +34,21 @@ public class Ball extends Circle {
      * @param wall
      */
     public void collision(Wall wall) {
+        //checks if the ball is currently colliding with the wall
+        if (super.intersects(wall) == null) {
+            return;
+        }
 
-        //check if the ball hits the wall. The return is the closest point of the wall to the center of the ball
-        Vector isec_ball_wall = super.intersects(wall);
+        //calculates the realistic collision-point of the ball with the wall.
+        Vector isec_ball_wall = wall.intersects(this);
+
         if (isec_ball_wall == null) {
             return;
         }
 
-        //construct new base for updating the velocity
         isec_ball_wall.sub(center);
+        //construct new base for updating the velocity
+
         Vector b2 = isec_ball_wall;
         b2.normalize();
 
@@ -58,8 +65,6 @@ public class Ball extends Circle {
         buf.scale(lc_velocity.y * -1);
 
         velocity_new.add(buf);
-
-        resetPosition(wall);
 
         this.velocity = velocity_new;
 
@@ -86,7 +91,7 @@ public class Ball extends Circle {
             return;
         }
 
-        resetPositionBB3(ball);
+        resetPosition(ball);
 
         // We want to build a base with the collision-tangent as the first base vector and
         // the collision-normal as the second base vector to calculate exchanged velocities.
@@ -123,7 +128,6 @@ public class Ball extends Circle {
         buf.scale(lc_vo.y);
         vt_new.add(buf);
 
-        //resetPositionBB(ball);
 
         this.velocity = vt_new;
 
@@ -161,7 +165,7 @@ public class Ball extends Circle {
         return inGame;
     }
 
-    public void setCenter(int x, int y) {
+    public void setCenter(float x, float y) {
         this.center.x = x;
         this.center.y = y;
     }
@@ -179,7 +183,7 @@ public class Ball extends Circle {
      * resets the position of the Ball after a collision with a wall
      * new position is the exact position where the ball would've hit the wall (compensating the inaccuracy of the ticks)
      */
-    private void resetPosition(Line line) {
+    public void resetPosition(Line line) {
 
         //construct the line that is parallel to the wall with a distance of radius + 1
 
@@ -263,7 +267,7 @@ public class Ball extends Circle {
 
 
     public float getEarliestCollision(Wall wall) {
-        if (Physics.dotProduct(this.velocity,wall.getDirection_vec()) == 0) {
+        if (Physics.dotProduct(this.velocity, wall.getDirection_vec()) == 0) {
             //trajectory is parallel to wall -> won't collide as we cant spawn inside the wall
             return 2;
         }
@@ -280,59 +284,18 @@ public class Ball extends Circle {
         Vector sup_wall = wall.getSupport_vec();
         Vector sol = new Vector(sup_wall.x - sup.x, sup_wall.y - sup.y);
 
-        Vector lds = Physics.solveLS(col1,col2,sol);
+        Vector lds = Physics.solveLS(col1, col2, sol);
 
         return lds.x;
-
-
     }
 
 
-
-    /**
-     * Resets the position by a fraction of velocity until we have a approximation of the actual collision position
-     */
-    public void resetPositionBB3(Ball other) {
-        //get the current positions of the centers
-        Vector cur_t = this.center.copy();
-        Vector cur_o = other.getCenterCopy();
-        Vector vel_t = this.velocity.copy();
-        vel_t.flip();
-        Vector vel_o = other.getVelocity().copy();
-        vel_o.flip();
-
-        cur_t.add(vel_t);
-        cur_o.add(vel_o);
-
-        Vector vel_buf;
-
-        for (int i = 0; i < 10; i++) {
-            if (super.intersects(other)) {
-                vel_t.scale(0.5F);
-                cur_t.add(vel_t);
-                this.center = cur_t;
-
-                vel_o.scale(0.5F);
-                cur_o.add(vel_o);
-                other.setCenter(cur_o);
-
-            } else {
-                vel_t.scale(0.5F);
-                cur_t.sub(vel_t);
-                this.center = cur_t;
-
-                vel_o.scale(0.5F);
-                cur_o.sub(vel_o);
-                other.setCenter(cur_o);
-            }
-        }
-
-        while (super.intersects(other)) {
-            this.center.add(vel_t);
-            other.getCenter().add(vel_o);
-        }
-
-
+    @Override
+    public String toString() {
+        return "Ball{" +
+                ", center=" + super.getCenter() +
+                ", velocity=" + velocity +
+                '}';
     }
 }
 

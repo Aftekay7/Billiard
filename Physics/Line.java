@@ -35,6 +35,7 @@ public class Line extends Collidable {
         float dotProduct = 0;
         dotProduct = Physics.dotProduct(direction_vec, lineOpp.getDirection_vec());
 
+
         //dotProd(v1,v2) == len(v1) * len(v2) <=> vectors are parallel
         // length only returns positive lengths whereas dotProd might return a negative value depending on the orientation of the vectors
         //-> take the absolut value of the dot product
@@ -67,5 +68,14 @@ public class Line extends Collidable {
         p.scale(L_2);
         p.add(lineOpp.support_vec);
         return p;
+    }
+
+
+    @Override
+    public String toString() {
+        return "Line{" +
+                "support_vec=" + support_vec +
+                ", direction_vec=" + direction_vec +
+                '}';
     }
 }

@@ -87,10 +87,6 @@ public class Renderer extends JFrame {
      * @param g
      */
     private void renderTable(Graphics g) {
-        for (Vector[] wall : table_rendered_edges) {
-            System.out.println(wall[0]);
-            System.out.println(wall[1]);
-        }
         //draw the playing field
         g.setColor(tableColor);
         g.fillRect((int) gameField_rendered_edges[0].x, (int) gameField_rendered_edges[0].y, gameField_rendered_width, gameField_rendered_height);
