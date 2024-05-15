@@ -34,6 +34,8 @@ public class Ball extends Circle {
      * @param wall
      */
     public void collision(Wall wall) {
+
+        //TODO fix this stupid shit. If the ball is colliding with the ball, the collisionpoint cant be null.
         //checks if the ball is currently colliding with the wall
         if (super.intersects(wall) == null) {
             return;
@@ -41,6 +43,7 @@ public class Ball extends Circle {
 
         //calculates the realistic collision-point of the ball with the wall.
         Vector isec_ball_wall = wall.intersects(this);
+
 
         if (isec_ball_wall == null) {
             return;
@@ -81,7 +84,7 @@ public class Ball extends Circle {
     /**
      * simulates the collision with another ball.
      *  TODO: Fix collision Bug. -> if ball collides and is "inside" the other ball, reset positions to the realistic (insersection of balls) collision point.
-     *  //TODO: calculate backwards where the spheres start to intersect and reset centers depending on their velocity
+     *  TODO: calculate backwards where the spheres start to intersect and reset centers depending on their velocity
      *
      * @param ball
      */
@@ -190,7 +193,7 @@ public class Ball extends Circle {
         //determine the support vector (-> line.support + radius)
         Vector orth = line.getDirection_vec().getOrthogonal();
         orth.normalize();
-        orth.scale(getRadius() + 1);
+        orth.scale(getRadius());
 
         //decide if we are on the left or right side of the wall
         Vector vel = this.velocity.copy();

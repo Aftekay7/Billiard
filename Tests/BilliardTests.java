@@ -312,5 +312,6 @@ public class BilliardTests {
         ball.setVelocity(new Vector(-10, 0));
 
         ball.collision(wall);
+        System.out.println(ball.getVelocity());
     }
 }

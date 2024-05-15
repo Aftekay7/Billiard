@@ -85,6 +85,7 @@ public class Wall extends Line {
         } else if (intersec.y >= edges[0].y && intersec.y <= edges[1].y) {
             //center of ball hits the wall
             ball.resetPosition(this);
+            orth.add(ball.getCenter());
             return orth;
 
         } else {
