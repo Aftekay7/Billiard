@@ -101,9 +101,18 @@ public class Renderer extends JFrame {
 
         //draw the walls
         g.setColor(wallColor);
-
+        float height = 0;
+        float width = 0;
         for (Vector[] wall : table_rendered_edges) {
-            g.drawLine((int) wall[0].x, (int) wall[0].y, (int) wall[1].x, (int) wall[1].y);
+            //g.drawLine((int) wall[0].x, (int) wall[0].y, (int) wall[1].x, (int) wall[1].y);
+
+            width = wall[0].x - wall[1].x;
+            height = wall[0].y - wall[1].y;
+
+            width = Math.abs(width);
+            height = Math.abs(height);
+
+            g.drawRect((int) wall[0].x, (int) wall[0].y, (int) width, (int) height);
         }
 
         //TODO: Add the holes
@@ -143,7 +152,6 @@ public class Renderer extends JFrame {
             g.setColor(Color.black);
             g.drawOval((int) vec.x, (int) vec.y, b.getRadius(), b.getRadius());
 
-            //System.out.println(vec);
 
             index++;
             c = gameObj[index];
@@ -174,12 +182,11 @@ public class Renderer extends JFrame {
      * testversion for the walls with holes
      */
     private void getTableCoords() {
-        int x =(this.window.getWidth() - (gameField_rendered_width + table_wall_rendered_width * 2)) / 2 - 1;
-        int y = this.window.getHeight() - ((this.window.getHeight() - (gameField_rendered_height + table_wall_rendered_width * 2)) / 2) - 1;
+        //determine distances between table and window edges
+        int x = (this.window.getWidth() - (gameField_rendered_width + table_wall_rendered_width * 2 + 1)) / 2;
+        int y = (this.window.getHeight() - (gameField_rendered_height + table_wall_rendered_width * 2 + 1)) / 2;
 
-
-        Vector offset = new Vector(x + table_wall_rendered_width, y);
-
+        Vector offset = new Vector(x + table_wall_rendered_width, y + table_wall_rendered_width);
 
         Collidable[] objects = table.getGameObjects();
 
@@ -216,6 +223,8 @@ public class Renderer extends JFrame {
 
     }
 
+
+    //TODO: Offset is bottom left corner of gamefield, not table. might adjust for computing the wall coordinates
     private void getGameFieldEdges() {
         int x = (this.window.getWidth() - (gameField_rendered_width + table_wall_rendered_width * 2)) / 2 - 1;
         int y = (this.window.getHeight() - (gameField_rendered_height + table_wall_rendered_width * 2)) / 2 - 1;
@@ -251,10 +260,10 @@ public class Renderer extends JFrame {
         table_marks[1] = new Vector(x, y + gameField_rendered_height);
 
         //headpoint
-        table_marks[2] = new Vector(x - radius, y + (gameField_rendered_height / 2) - radius);
+        table_marks[2] = new Vector(x - radius, y + (gameField_rendered_height / 2F) - radius);
 
         //footpoint
-        table_marks[3] = new Vector(table_marks[2].x + (gameField_rendered_width / 2), table_marks[2].y);
+        table_marks[3] = new Vector(table_marks[2].x + (gameField_rendered_width / 2F), table_marks[2].y);
     }
 
 
