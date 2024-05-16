@@ -314,4 +314,6 @@ public class BilliardTests {
         ball.collision(wall);
         System.out.println(ball.getVelocity());
     }
+
+    //TODO: test for bug where ball glitch through wall very late in the game. Couldn't be recreated yet.
 }

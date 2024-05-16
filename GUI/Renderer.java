@@ -14,11 +14,17 @@ import java.awt.event.ActionListener;
 
 /**
  * Renders the used Objects
+ * TODO: Rewrite renderer: Determine coordinates of all used objects and then (!) transform into coordinate-system of
+ * TODO the frame-library ("flip y coordinate") -> more compact, easier to read, no mixture of coordinate-systems.
+ * TODO: instantiate one "database" for all static objects that need to be drawn.
  */
 public class Renderer extends JFrame {
+    //TODO: move aspects of objects to the according classes
     private Color tableColor;
     private Color wallColor;
     private Color holeColor;
+
+    //TODO: clean up used helper-variables. Most of them are not necessary
 
     // The value by which the table is downscaled during the rendering process.
     private final int scaler = 2;
@@ -104,15 +110,8 @@ public class Renderer extends JFrame {
         float height = 0;
         float width = 0;
         for (Vector[] wall : table_rendered_edges) {
-            //g.drawLine((int) wall[0].x, (int) wall[0].y, (int) wall[1].x, (int) wall[1].y);
-
-            width = wall[0].x - wall[1].x;
-            height = wall[0].y - wall[1].y;
-
-            width = Math.abs(width);
-            height = Math.abs(height);
-
-            g.drawRect((int) wall[0].x, (int) wall[0].y, (int) width, (int) height);
+            g.drawLine((int) wall[0].x, (int) wall[0].y, (int) wall[1].x, (int) wall[1].y);
+            //g.drawRect((int) wall[0].x, (int) wall[0].y, (int) width, (int) height);
         }
 
         //TODO: Add the holes
@@ -152,13 +151,13 @@ public class Renderer extends JFrame {
             g.setColor(Color.black);
             g.drawOval((int) vec.x, (int) vec.y, b.getRadius(), b.getRadius());
 
-
             index++;
             c = gameObj[index];
         }
     }
 
     /**
+     * TODO: Sum up in one matrix multiplication.
      * converts the coordinates of the ball of our coordinate system into coords that are used in the coordinate system
      * of the drawing library and scales down the size of the table, so it fits into our screen.
      * We divide x and y by two as every block of 2 * 2 millimeters is represented by one pixel
@@ -179,7 +178,7 @@ public class Renderer extends JFrame {
 
 
     /**
-     * testversion for the walls with holes
+     * initializes a little database with the drawing information of the table
      */
     private void getTableCoords() {
         //determine distances between table and window edges
@@ -198,7 +197,7 @@ public class Renderer extends JFrame {
             c = objects[index];
         }
         int w = 0;
-        Vector[][] wallEdges = new Vector[objects.length - index][2];
+        Vector[][] wallEdges = new Vector[objects.length - index][2];   //e1,e2
 
         for (int i = index; i < objects.length; i++) {
             Wall wall = (Wall) objects[i];

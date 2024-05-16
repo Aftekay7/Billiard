@@ -1,9 +1,7 @@
 package Game.Structures;
 
 import Physics.*;
-
 import java.awt.*;
-import java.lang.reflect.Array;
 
 /**
  * Implements a Ball
@@ -20,7 +18,7 @@ public class Ball extends Circle {
 
     /**
      * simulates a (central) hit on the ball and updates its position
-     *
+     *  TODO: implement
      * @param hit defines the direction and the velocity (length of the vector)
      */
     public void hitBall(Vector hit) {
@@ -29,7 +27,6 @@ public class Ball extends Circle {
 
     /**
      * Simulates a collision with a wall
-     *  TODO: Fix collision Bug. -> if ball collides and is "inside" the wall, reset position to the realistic (line/circumference) collision point.
      *
      * @param wall
      */

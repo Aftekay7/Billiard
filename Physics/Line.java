@@ -43,8 +43,6 @@ public class Line extends Collidable {
             dotProduct *= -1;
         }
 
-
-        // TODO: Maye add a delta for the check (float might be not precise enough) if parallel Vectors are still passed on
         float lengthProd = direction_vec.length() * lineOpp.direction_vec.length();
         //float delta = 0.001F;
         if (dotProduct == lengthProd) {
