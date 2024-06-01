@@ -218,7 +218,6 @@ public class Table {
 
     /**
      * initializes the walls that are used
-     * TODO: Coordinates for the single walls have to be set
      *
      * @return Array of walls
      */
